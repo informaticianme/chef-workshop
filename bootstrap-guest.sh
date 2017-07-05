@@ -7,6 +7,12 @@ USERHOME=$3
 KEY_LOCATION=$4
 KEY_FILENAME=$5
 
+# ensure the time is up to date
+sudo yum install -y ntp
+sudo systemctl stop ntpd
+sudo ntpdate -s time.nist.gov
+sudo systemctl start ntpd
+
 # Set & Configure Remote User
 adduser $USERNAME
 echo $PASSWORD | passwd $USERNAME --stdin
