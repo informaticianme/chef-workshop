@@ -22,20 +22,12 @@ fi
 # Install Chef Server
 sudo rpm -ivh chef-server-core-12.15.8-1.el7.x86_64.rpm
 
-# Disable SSL for Nginx
-echo "nginx['enable_non_ssl'] = true" >> /etc/opscode/chef-server.rb
-#echo "addons['install'] = true" >> /etc/opscode/chef-server.rb
-#echo "addons['packages'] = %w{chef-manage}" >> /etc/opscode/chef-server.rb
-
-# Reconfigure and restart services
-sudo chef-server-ctl install chef-manage
-sudo chef-server-ctl reconfigure
-sudo chef-manage-ctl reconfigure --accept-license
-sudo chef-server-ctl restart
-
 # Wait a duration so that the chef service is ready
-until (curl -D - http://localhost:8000/_status) | grep "200 OK"; do sleep 15s; done
+sleep 120
+#until (curl -D - http://localhost:8000/_status) | grep "200 OK"; do sleep 15s; done
 #while (curl http://localhost:8000/_status) | grep "fail"; do sleep 15s; done
+chef-server-ctl reconfigure
+chef-server-ctl restart
 
 # Setup chef server user and organization
 chef-server-ctl user-create $USERNAME $FIRST_NAME $LAST_NAME $EMAIL $PASSWORD -f /home/vagrant/pem/$USERNAME.pem

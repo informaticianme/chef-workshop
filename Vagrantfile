@@ -20,8 +20,8 @@ HOME=ENV['HOME']
 
 # VIRTUAL MACHINES
 machines = [
-	{ :name => 'chef',       :subd => 'vmhost',    :ip => '172.128.28.11', :ram => '4096', :cpus => '2' }
-	#{ :name => 'isolon',     :subd => 'vmhost',    :ip => '172.128.28.21', :ram => '512',  :cpus => '1' }
+	{ :name => 'chef',       :subd => 'vmhost',    :ip => '174.128.28.11', :ram => '4096', :cpus => '2' },
+	{ :name => 'isolon',     :subd => 'vmhost',    :ip => '174.128.28.21', :ram => '512',  :cpus => '1' }
 	#{ :name => 'mysqlc',     :subd => 'vmhost',    :ip => '172.128.28.22', :ram => '512',  :cpus => '1' },
 	#{ :name => 'sswebprod',  :subd => 'libraries', :ip => '172.128.28.31', :ram => '512',  :cpus => '1' },
 	#{ :name => 'ssjobsprod', :subd => 'libraries', :ip => '172.128.28.32', :ram => '512',  :cpus => '1' },
@@ -40,7 +40,6 @@ Vagrant.configure('2') do |config|
 
 	machines.each do |machine|
 		is_chef = machine[:name] == 'chef'
-		is_automate = machine[:name] == 'automate'
 
 		config.vm.define machine[:name] do |node|
 			node.vm.box = 'centos/7'
@@ -96,11 +95,9 @@ Vagrant.configure('2') do |config|
 					:args => [
 						"#{USERNAME}",
 						"#{machine[:name]}",
-						"#{SHORTNAME}",
-						"#{CHEF_INTERVAL}"
+						"#{SHORTNAME}"
 					]
 			end
-
 		end
 	end
 end

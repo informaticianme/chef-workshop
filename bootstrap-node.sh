@@ -4,13 +4,15 @@
 USERNAME=$1
 MACHINE_NAME=$2
 SHORTNAME=$3
-CHEF_INTERVAL=$4
 
 # Create some necessary directories
 sudo /bin/mkdir -p /etc/chef
 sudo /bin/mkdir -p /var/chef
 sudo /bin/mkdir -p /var/lib/chef
 sudo /bin/mkdir -p /var/log/chef
+
+# Create log file
+touch /var/log/chef/chef.log
 
 # Copy in the validiator file
 sudo cp /home/vagrant/$SHORTNAME-validator.pem /etc/chef/$SHORTNAME-validator.pem
