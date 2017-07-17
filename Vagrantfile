@@ -71,6 +71,9 @@ Vagrant.configure('2') do |config|
 
 			if is_chef
 				node.vm.synced_folder "#{HOME}/.chef", "/home/vagrant/pem"
+				node.vm.provision :chef_solo do |chef|
+					chef.run_list = ['recipe[chef-server]']
+				end
 				node.vm.provision :shell,
 					:path => "bootstrap-server.sh",
 					:args => [
@@ -81,7 +84,6 @@ Vagrant.configure('2') do |config|
 						"#{PASSWORD}",
 						"#{SHORTNAME}",
 						"#{LONGNAME}",
-						"#{machine[:name]}",
 						"#{COOKBOOK_PATH}"
 					]
 			end
@@ -90,6 +92,9 @@ Vagrant.configure('2') do |config|
 				node.vm.provision :file,
 					:source => "#{HOME}/.chef/#{SHORTNAME}-validator.pem",
 					:destination => "/home/vagrant/#{SHORTNAME}-validator.pem"
+				node.vm.provision :chef_solo do |chef|
+					chef.run_list = ['recipe[chef-client]']
+				end
 				node.vm.provision :shell,
 					:path => "bootstrap-node.sh",
 					:args => [
@@ -98,6 +103,7 @@ Vagrant.configure('2') do |config|
 						"#{SHORTNAME}"
 					]
 			end
+
 		end
 	end
 end

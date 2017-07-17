@@ -5,12 +5,6 @@ USERNAME=$1
 MACHINE_NAME=$2
 SHORTNAME=$3
 
-# Create some necessary directories
-sudo /bin/mkdir -p /etc/chef
-sudo /bin/mkdir -p /var/chef
-sudo /bin/mkdir -p /var/lib/chef
-sudo /bin/mkdir -p /var/log/chef
-
 # Create log file
 touch /var/log/chef/chef.log
 
@@ -22,11 +16,6 @@ sudo chown -R $USERNAME:$USERNAME /etc/chef
 sudo chown -R $USERNAME:$USERNAME /var/chef
 sudo chown -R $USERNAME:$USERNAME /var/lib/chef
 sudo chown -R $USERNAME:$USERNAME /var/log/chef
-
-cd /etc/chef/
-
-# Install chef
-curl -L https://omnitruck.chef.io/install.sh | bash || error_exit 'could not install chef'
 
 # Generate node name
 NODENAME="$MACHINE_NAME-$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 4 | head -n 1)"

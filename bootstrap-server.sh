@@ -8,26 +8,10 @@ EMAIL=$4
 PASSWORD=$5
 SHORTNAME=$6
 LONGNAME=$7
-MACHINE_NAME=$8
-COOKBOOK_PATH=$9
+COOKBOOK_PATH=$8
 
-# Install wget
-sudo yum install -y wget
-
-# Download the Chef Server package
-if [ ! -f chef-server-core-12.15.8-1.el7.x86_64.rpm ]; then
-	wget -nv https://packages.chef.io/files/stable/chef-server/12.15.8/el/7/chef-server-core-12.15.8-1.el7.x86_64.rpm
-fi
-
-# Install Chef Server
-sudo rpm -ivh chef-server-core-12.15.8-1.el7.x86_64.rpm
-
-# Wait a duration so that the chef service is ready
-sleep 120
-#until (curl -D - http://localhost:8000/_status) | grep "200 OK"; do sleep 15s; done
-#while (curl http://localhost:8000/_status) | grep "fail"; do sleep 15s; done
-chef-server-ctl reconfigure
-chef-server-ctl restart
+# Wait chef service is ready
+until (curl -D - http://localhost:8000/_status) | grep "200 OK"; do sleep 20s; done
 
 # Setup chef server user and organization
 chef-server-ctl user-create $USERNAME $FIRST_NAME $LAST_NAME $EMAIL $PASSWORD -f /home/vagrant/pem/$USERNAME.pem
