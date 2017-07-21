@@ -1,4 +1,4 @@
-#encoding: utf-8
+# encoding: utf-8
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
@@ -62,6 +62,7 @@ Vagrant.configure('2') do |config|
 			node.vm.provision :shell,
 				:path => "bootstrap-guest.sh",
 				:args => [
+					"#{machine[:name]}",
 					"#{USERNAME}",
 					"#{PASSWORD}",
 					"#{USERHOME}",
@@ -99,8 +100,8 @@ Vagrant.configure('2') do |config|
 					:path => "bootstrap-node.sh",
 					:args => [
 						"#{USERNAME}",
-						"#{machine[:name]}",
-						"#{SHORTNAME}"
+						"#{SHORTNAME}",
+						"#{machine[:name]}"
 					]
 			end
 

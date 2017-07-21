@@ -1,11 +1,15 @@
 #!/bin/bash
 
 # CONSTANTS
-USERNAME=$1
-PASSWORD=$2
-USERHOME=$3
-KEY_LOCATION=$4
-KEY_FILENAME=$5
+HOSTNAME=$1
+USERNAME=$2
+PASSWORD=$3
+USERHOME=$4
+KEY_LOCATION=$5
+KEY_FILENAME=$6
+
+# Set server hostname
+echo "$HOSTNAME" > /etc/hostname
 
 # ensure the time is up to date
 sudo yum install -y ntp
