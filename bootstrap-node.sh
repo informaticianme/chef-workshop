@@ -2,8 +2,8 @@
 
 # CONSTANTS	
 USERNAME=$1
+MACHINENAME=$2
 SHORTNAME=$3
-MACHINE_NAME=$2
 
 # Create log file
 touch /var/log/chef/chef.log
@@ -21,7 +21,7 @@ if [ -f /etc/chef/client.rb ]; then
 fi
 
 # Generate node name
-NODENAME="$MACHINE_NAME-$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 4 | head -n 1)"
+NODENAME="$MACHINENAME-$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 4 | head -n 1)"
 
 cat <<EOT >> /etc/chef/client.rb
 log_level	:info
@@ -36,9 +36,6 @@ EOT
 
 # Copy in the validiator file
 sudo cp /home/vagrant/$SHORTNAME-validator.pem /etc/chef/$SHORTNAME-validator.pem
-
-# Generate node name
-NODENAME="$MACHINE_NAME-$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 4 | head -n 1)"
 
 # Register node with server
 chef-client -u $USERNAME -N $NODENAME

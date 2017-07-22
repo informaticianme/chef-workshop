@@ -11,7 +11,7 @@ LONGNAME=$7
 COOKBOOK_PATH=$8
 
 # Wait chef service is ready
-until (curl -D - http://localhost:8000/_status) | grep "200 OK"; do sleep 25s; done
+until (curl -D - http://localhost:8000/_status) | grep "200 OK"; do sleep 30s; done
 
 # Setup chef server user and organization
 chef-server-ctl user-create $USERNAME $FIRST_NAME $LAST_NAME $EMAIL $PASSWORD -f /home/vagrant/pem/$USERNAME.pem
@@ -25,7 +25,7 @@ fi
 
 # Create knife configuration file
 cat <<EOT >> /home/vagrant/pem/knife.rb
-current_dir = File.dirname(__FILE__)
+current_dir =            File.dirname(__FILE__)
 log_level                :info
 log_location             '/var/log/chef/chef.log'
 node_name                "$USERNAME"
@@ -35,6 +35,6 @@ validation_key           "#{current_dir}/$SHORTNAME-validator.pem"
 chef_server_url          'https://chef.vmhost.psu.test/organizations/$SHORTNAME'
 syntax_check_cache_path  "#{ENV['HOME']}/.chef/syntaxcache"
 cookbook_path            ['$COOKBOOK_PATH']
-ssl_verify_mode :verify_none
-verify_api_cert false
+ssl_verify_mode          :verify_none
+verify_api_cert          false
 EOT

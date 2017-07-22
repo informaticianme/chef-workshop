@@ -100,8 +100,8 @@ Vagrant.configure('2') do |config|
 					:path => "bootstrap-node.sh",
 					:args => [
 						"#{USERNAME}",
-						"#{SHORTNAME}",
 						"#{machine[:name]}"
+						"#{SHORTNAME}",
 					]
 			end
 
