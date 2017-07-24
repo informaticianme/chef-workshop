@@ -11,7 +11,7 @@ LONGNAME=$7
 COOKBOOK_PATH=$8
 
 # Wait chef service is ready
-until (curl -D - http://localhost:8000/_status) | grep "200 OK"; do sleep 30s; done
+until (curl -D - http://localhost:8000/_status) | grep "200 OK"; do sleep 40s; done
 
 # Setup chef server user and organization
 chef-server-ctl user-create $USERNAME $FIRST_NAME $LAST_NAME $EMAIL $PASSWORD -f /home/vagrant/pem/$USERNAME.pem

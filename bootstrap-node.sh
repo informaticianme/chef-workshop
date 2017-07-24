@@ -21,7 +21,8 @@ if [ -f /etc/chef/client.rb ]; then
 fi
 
 # Generate node name
-NODENAME="$MACHINENAME-$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 4 | head -n 1)"
+#NODENAME="$MACHINENAME-$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 4 | head -n 1)"
+NODENAME="$MACHINENAME"
 
 cat <<EOT >> /etc/chef/client.rb
 log_level	:info
