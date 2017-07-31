@@ -2,3 +2,4 @@
 .vagrant
 *.lock
 cookbooks/*
+VBoxGuestAdditions_5.1.22.iso
