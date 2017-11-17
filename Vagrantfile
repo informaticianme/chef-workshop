@@ -13,7 +13,7 @@ SHORTNAME="psu-stewardship"
 LONGNAME="'Penn State University Libraries'"
 KEY_LOCATION="/home/#{USERNAME}/.ssh"
 KEY_FILENAME='ext.domain@user'
-COOKBOOK_PATH="#{USERHOME}/Projects/informaticianme/chef.cookbooks"
+COOKBOOK_PATH="#{USERHOME}/Projects/github.com/informaticianme/chef.cookbooks"
 
 # ENVIRONMENT VARIABLES
 HOME=ENV['HOME']
