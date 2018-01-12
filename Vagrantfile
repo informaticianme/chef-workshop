@@ -20,15 +20,15 @@ HOME=ENV['HOME']
 
 # VIRTUAL MACHINES
 machines = [
-	{ :name => 'chef',       :subd => 'vmhost',    :ip => '174.128.28.11', :ram => '4096', :cpus => '2' },
-	{ :name => 'isolon',     :subd => 'vmhost',    :ip => '174.128.28.21', :ram => '512',  :cpus => '1' }
-	#{ :name => 'mysqlc',     :subd => 'vmhost',    :ip => '172.128.28.22', :ram => '512',  :cpus => '1' },
-	#{ :name => 'sswebprod',  :subd => 'libraries', :ip => '172.128.28.31', :ram => '512',  :cpus => '1' },
-	#{ :name => 'ssjobsprod', :subd => 'libraries', :ip => '172.128.28.32', :ram => '512',  :cpus => '1' },
-	#{ :name => 'ssrepoprod', :subd => 'libraries', :ip => '172.128.28.33', :ram => '512',  :cpus => '1' },
-	#{ :name => 'sswebtest',  :subd => 'libraries', :ip => '172.128.28.34', :ram => '512',  :cpus => '1' },
-	#{ :name => 'ssjobstest', :subd => 'libraries', :ip => '172.128.28.35', :ram => '512',  :cpus => '1' },
-	#{ :name => 'ssrepotest', :subd => 'libraries', :ip => '172.128.28.36', :ram => '512',  :cpus => '1' },
+	 { :name => 'chef',       :subd => 'vmhost',    :ip => '174.128.28.11', :ram => '4096', :cpus => '2', :provisioned => false },
+	 { :name => 'isilon',     :subd => 'vmhost',    :ip => '174.128.28.21', :ram => '512',  :cpus => '1', :provisioned => false },
+	#{ :name => 'mysqlc',     :subd => 'vmhost',    :ip => '172.128.28.22', :ram => '512',  :cpus => '1', :provisioned => true },
+	 { :name => 'ssprodweb',  :subd => 'libraries', :ip => '172.128.28.31', :ram => '512',  :cpus => '1', :provisioned => false },
+	#{ :name => 'ssprodjobs', :subd => 'libraries', :ip => '172.128.28.32', :ram => '512',  :cpus => '1', :provisioned => true },
+	#{ :name => 'ssprodrepo', :subd => 'libraries', :ip => '172.128.28.33', :ram => '512',  :cpus => '1', :provisioned => true },
+	 { :name => 'sstestweb',  :subd => 'libraries', :ip => '172.128.28.34', :ram => '512',  :cpus => '1', :provisioned => false }
+	#{ :name => 'sstestjobs', :subd => 'libraries', :ip => '172.128.28.35', :ram => '512',  :cpus => '1', :provisioned => true },
+	#{ :name => 'sstestrepo', :subd => 'libraries', :ip => '172.128.28.36', :ram => '512',  :cpus => '1', :provisioned => true },
 ]
 
 Vagrant.configure('2') do |config|
@@ -53,58 +53,74 @@ Vagrant.configure('2') do |config|
 				vb.customize ['modifyvm', :id, '--vram', '33']
 			end
 
-			node.vm.provision :file,
-				:source => "#{KEY_LOCATION}/#{KEY_FILENAME}",
-				:destination => "/home/vagrant/#{KEY_FILENAME}"
-			node.vm.provision :file,
-				:source => "#{KEY_LOCATION}/#{KEY_FILENAME}.pub",
-				:destination => "/home/vagrant/#{KEY_FILENAME}.pub"
-			node.vm.provision :shell,
-				:path => "bootstrap-guest.sh",
-				:args => [
-					"#{machine[:name]}",
-					"#{USERNAME}",
-					"#{PASSWORD}",
-					"#{USERHOME}",
-					"#{KEY_LOCATION}",
-					"#{KEY_FILENAME}"
-				]
-
-			if is_chef
-				node.vm.synced_folder "#{HOME}/.chef", "/home/vagrant/pem"
-				node.vm.provision :chef_solo do |chef|
-					chef.run_list = ['recipe[chef-server]']
-				end
-				node.vm.provision :shell,
-					:path => "bootstrap-server.sh",
-					:args => [
-						"#{USERNAME}",
-						"#{FIRST_NAME}",
-						"#{LAST_NAME}",
-						"#{EMAIL}",
-						"#{PASSWORD}",
-						"#{SHORTNAME}",
-						"#{LONGNAME}",
-						"#{COOKBOOK_PATH}"
-					]
-			end
-
-			if !is_chef
+			if machine[:provisioned] == false
 				node.vm.provision :file,
-					:source => "#{HOME}/.chef/#{SHORTNAME}-validator.pem",
-					:destination => "/home/vagrant/#{SHORTNAME}-validator.pem"
-				node.vm.provision :chef_solo do |chef|
-					chef.run_list = ['recipe[chef-client]']
-				end
+					:source => "#{KEY_LOCATION}/#{KEY_FILENAME}.pem",
+					:destination => "/home/vagrant/#{KEY_FILENAME}.pem"
+				node.vm.provision :file,
+					:source => "#{KEY_LOCATION}/#{KEY_FILENAME}.pub",
+					:destination => "/home/vagrant/#{KEY_FILENAME}.pub"
 				node.vm.provision :shell,
-					:path => "bootstrap-node.sh",
+					:path => "bootstrap-guest.sh",
 					:args => [
-						"#{USERNAME}",
 						"#{machine[:name]}",
-						"#{SHORTNAME}"
+						"#{USERNAME}",
+						"#{PASSWORD}",
+						"#{USERHOME}",
+						"#{KEY_LOCATION}",
+						"#{KEY_FILENAME}"
 					]
-			end
 
+				if is_chef
+					node.vm.synced_folder "#{HOME}/.chef", "/home/vagrant/pem"
+					node.vm.provision :chef_solo do |chef|
+						chef.run_list = ['recipe[chef-server]']
+					end
+					node.vm.provision :shell,
+						:path => "bootstrap-server.sh",
+						:args => [
+							"#{USERNAME}",
+							"#{FIRST_NAME}",
+							"#{LAST_NAME}",
+							"#{EMAIL}",
+							"#{PASSWORD}",
+							"#{SHORTNAME}",
+							"#{LONGNAME}",
+							"#{COOKBOOK_PATH}"
+						]
+				end
+
+				if !is_chef
+					node.vm.provision :file,
+						:source => "#{HOME}/.chef/#{SHORTNAME}-validator.pem",
+						:destination => "/home/vagrant/#{SHORTNAME}-validator.pem"
+					node.vm.provision :chef_solo do |chef|
+						chef.run_list = ['recipe[chef-client]']
+					end
+					node.vm.provision :shell,
+						:path => "bootstrap-node.sh",
+						:args => [
+							"#{USERNAME}",
+							"#{machine[:name]}",
+							"#{SHORTNAME}"
+						]
+				end
+			end
 		end
 	end
+
+	machines.each do |machine|
+		config.trigger.before :up, :stdout => false do
+			run "sed -i '#{machine.name}/s/:provisioned => true/:provisioned => false/' Vagrantfile"
+		end
+	end
+	config.trigger.after :up, :stdout => false do
+		run "sed -i '/#{@machine.name}/s/:provisioned => false/:provisioned => true/' Vagrantfile"
+		run "vagrant snapshot save #{@machine.name} 0.1"
+	end
+
+	config.trigger.after :destroy, :stdout => false do
+		run "sed -i '/#{@machine.name}/s/:provisioned => true/:provisioned => false/' Vagrantfile"
+	end
+
 end
