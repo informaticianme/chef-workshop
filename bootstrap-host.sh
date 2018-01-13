@@ -77,10 +77,11 @@ install_git() {
 
 create_ssh_key() {
 	ssh-keygen -t rsa -C $EMAIL -f $HOME/.ssh/$SSHKEY
+	mv $HOME/.ssh/$SSHKEY $HOME/.ssh/$SSHKEY.pem
 }
 
 configure_keychain() {
-	sudo echo "eval `keychain --eval --agents ssh $SSHKEY`" >> $HOME/.bashrc
+	sudo echo "eval `keychain --eval --agents ssh $SSHKEY.pem`" >> $HOME/.bashrc
 }
 
 install_virtualbox() {
