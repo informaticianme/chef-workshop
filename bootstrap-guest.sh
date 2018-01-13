@@ -38,6 +38,9 @@ sudo echo "eval \`keychain --eval --agents ssh $KEY_LOCATION/$KEY_FILENAME.pem\`
 sudo rpm -Uvh https://s3-eu-west-1.amazonaws.com/rpm-repos-el7/rpm-repos-el7-1-1.el7.noarch.rpm
 sudo yum install -y keychain
 
+# Set user as sudoer
+sudo echo "$USERNAME ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/$USERNAME
+
 # Disable firewall
 sudo systemctl stop firewalld
 
