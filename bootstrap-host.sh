@@ -3,6 +3,8 @@
 # Do not run as sudo
 # $ ./chef-bootstrap.sh  >> chef-bootstrap.log 2>&1 # Apt causes scripting issues.
 
+#TODO rewrite in python
+
 # Set Constants
 NAME='First, Initial, Last'
 EMAIL='user@domain.ext'
@@ -109,16 +111,17 @@ install_vagrant() {
 			rm vagrant_2.0.1_x86_64.deb
 			;;
 	esac
+	#vagrant plugin install landrush
 	vagrant plugin install vagrant-vbguest
 	vagrant plugin install vagrant-berkshelf
-	#vagrant plugin install landrush
 	vagrant plugin install vagrant-hostmanager
+	vagrant plugin install vagrant-triggers
 }
 
 configure_hostmanager() {
 	# add the following lines to /etc/sudoers.d/vagrant_hostmanager
 	# https://github.com/devopsgroup-io/vagrant-hostmanager
-	#Cmnd_Alias VAGRANT_HOSTMANAGER_UPDATE = /bin/cp ~/.vagrant.d/tmp/hosts.local /etc/hosts
+	#Cmnd_Alias VAGRANT_HOSTMANAGER_UPDATE = /bin/cp $HOME/.vagrant.d/tmp/hosts.local /etc/hosts
 	#%wheel ALL=(root) NOPASSWD: VAGRANT_HOSTMANAGER_UPDATE
 	# add user to admin group
 	# gpasswd wheel -a $(whoami)
@@ -136,7 +139,15 @@ configure_chefdk() {
 	if ! [ -d "/var/log/chef" ]; then
 		sudo mkdir /var/log/chef
 	fi
+	if ! [ -d "$HOME/.chef" ]; then
+		mkdir "$HOME/.chef"
+	fi
 	sudo chown $USERNAME:$USERNAME /var/log/chef
+}
+
+configure_ssh_config() {
+	echo 'Host *.vmhost.psu.test' >> $HOME/.ssh/config
+	echo "	IdentityFile ~/.ssh/$SSHKEY.pub" >> $HOME/.ssh/config
 }
 
 run() {

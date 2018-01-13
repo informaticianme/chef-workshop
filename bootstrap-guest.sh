@@ -24,15 +24,15 @@ usermod -aG wheel $USERNAME
 
 # Place User SSH Keys
 sudo mkdir -p "$KEY_LOCATION"
-sudo mv /home/vagrant/$KEY_FILENAME $KEY_LOCATION
+sudo mv /home/vagrant/$KEY_FILENAME.pem $KEY_LOCATION
 sudo mv /home/vagrant/$KEY_FILENAME.pub $KEY_LOCATION
 sudo cp $KEY_LOCATION/$KEY_FILENAME.pub $KEY_LOCATION/authorized_keys
 sudo chown -R $USERNAME:$USERNAME $KEY_LOCATION
-sudo chmod 0600 $KEY_LOCATION/$KEY_FILENAME
+sudo chmod 0600 $KEY_LOCATION/$KEY_FILENAME.pem
 sudo chmod 0644 $KEY_LOCATION/$KEY_FILENAME.pub
 
 # Add ssh keys to keychain
-sudo echo "eval \`keychain --eval --agents ssh $KEY_LOCATION/$KEY_FILENAME\`" >> "$USERHOME/.bash_profile"
+sudo echo "eval \`keychain --eval --agents ssh $KEY_LOCATION/$KEY_FILENAME.pem\`" >> "$USERHOME/.bash_profile"
 
 # Install keychain for ssh keys
 sudo rpm -Uvh https://s3-eu-west-1.amazonaws.com/rpm-repos-el7/rpm-repos-el7-1-1.el7.noarch.rpm
