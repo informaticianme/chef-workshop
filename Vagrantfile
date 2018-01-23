@@ -20,15 +20,16 @@ HOME=ENV['HOME']
 
 # VIRTUAL MACHINES
 machines = [
-	 { :name => 'chef',       :subd => 'vmhost',    :ip => '174.128.28.11', :ram => '4096', :cpus => '2' },
-	 { :name => 'isilon',     :subd => 'vmhost',    :ip => '174.128.28.21', :ram => '512',  :cpus => '1' },
-	#{ :name => 'mysqlc',     :subd => 'vmhost',    :ip => '172.128.28.22', :ram => '512',  :cpus => '1' },
-	 { :name => 'ssprodweb',  :subd => 'libraries', :ip => '172.128.28.31', :ram => '512',  :cpus => '1' },
-	#{ :name => 'ssprodjobs', :subd => 'libraries', :ip => '172.128.28.32', :ram => '512',  :cpus => '1' },
-	#{ :name => 'ssprodrepo', :subd => 'libraries', :ip => '172.128.28.33', :ram => '512',  :cpus => '1' },
-	 { :name => 'sstestweb',  :subd => 'libraries', :ip => '172.128.28.34', :ram => '512',  :cpus => '1' }
-	#{ :name => 'sstestjobs', :subd => 'libraries', :ip => '172.128.28.35', :ram => '512',  :cpus => '1' },
-	#{ :name => 'sstestrepo', :subd => 'libraries', :ip => '172.128.28.36', :ram => '512',  :cpus => '1' }
+	 { :name => 'chef',       :ssh_port => '2511', :subd => 'vmhost',    :ip => '174.128.28.11', :ram => '4096', :cpus => '2' },
+	 { :name => 'isilon',     :ssh_port => '2521', :subd => 'vmhost',    :ip => '174.128.28.21', :ram => '512',  :cpus => '1' },
+	 { :name => 'mariaprod',  :ssh_port => '2522', :subd => 'vmhost',    :ip => '172.128.28.22', :ram => '512',  :cpus => '1' },
+	#{ :name => 'mariatest',  :ssh_port => '2523', :subd => 'vmhost',    :ip => '172.128.28.23', :ram => '512',  :cpus => '1' },
+	 { :name => 'ssprodweb',  :ssh_port => '2531', :subd => 'libraries', :ip => '172.128.28.31', :ram => '512',  :cpus => '1' },
+	#{ :name => 'ssprodjobs', :ssh_port => '2532', :subd => 'libraries', :ip => '172.128.28.32', :ram => '512',  :cpus => '1' },
+	#{ :name => 'ssprodrepo', :ssh_port => '2533', :subd => 'libraries', :ip => '172.128.28.33', :ram => '512',  :cpus => '1' },
+	 { :name => 'sstestweb',  :ssh_port => '2534', :subd => 'libraries', :ip => '172.128.28.34', :ram => '512',  :cpus => '1' }
+	#{ :name => 'sstestjobs', :ssh_port => '2535', :subd => 'libraries', :ip => '172.128.28.35', :ram => '512',  :cpus => '1' },
+	#{ :name => 'sstestrepo', :ssh_port => '2536', :subd => 'libraries', :ip => '172.128.28.36', :ram => '512',  :cpus => '1' }
 ]
 
 Vagrant.configure('2') do |config|
@@ -46,6 +47,7 @@ Vagrant.configure('2') do |config|
 			node.vm.box_check_update
 			node.vm.hostname = "#{machine[:name]}.#{machine[:subd]}.psu.test"
 			node.vm.network :private_network, ip: "#{machine[:ip]}"
+			node.vm.network :forwarded_port, guest: 22, host: machine[:ssh_port]
 			node.vm.provider :virtualbox do |vb|
 				vb.name = "#{machine[:name]}"
 				vb.memory = "#{machine[:ram]}"
